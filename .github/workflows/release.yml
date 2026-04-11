@@ -1,0 +1,227 @@
+name: Release
+run-name: "Release Tag: ${{ github.ref_name }}"
+
+on:
+  push:
+    tags:
+      - '*.*.*/*.*.*'
+
+jobs:
+  build-and-release:
+    name: Build and prepare artifacts
+    runs-on: ubuntu-latest
+    outputs:
+      files_json: ${{ steps.gather.outputs.files_json }}
+      mod: ${{ steps.meta.outputs.mod }}
+      branch: ${{ steps.meta.outputs.branch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine tag and containing branch
+        id: meta
+        run: |
+          full_tag=${GITHUB_REF#refs/tags/}
+          echo "tag=$full_tag" >> $GITHUB_OUTPUT
+          mod=${full_tag##*/}
+          echo "mod=$mod" >> $GITHUB_OUTPUT
+          git fetch origin 'refs/heads/*:refs/remotes/origin/*' || true
+          branches=$(git branch -r --contains $GITHUB_SHA 2>/dev/null || true)
+          branch=$(echo "$branches" | sed 's#^[[:space:]]*##' | sed 's#^origin/##' | head -n1 || true)
+          if [ -z "$branch" ]; then branch="unknown"; fi
+          echo "branch=$branch" >> $GITHUB_OUTPUT
+
+      - name: Setup JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Cache gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+
+      - name: Build (assemble jars)
+        shell: bash
+        env:
+          GRADLE_OPTS: "-Dsun.net.client.defaultConnectTimeout=600000 -Dsun.net.client.defaultReadTimeout=600000"
+        run: |
+          retries=3
+          attempt=1
+          until [ $attempt -gt $retries ]
+          do
+            echo "Attempt $attempt/$retries"
+            if [ $attempt -eq 1 ]; then
+              bash ./gradlew --no-daemon assemble
+            else
+              bash ./gradlew --no-daemon assemble --refresh-dependencies
+            fi
+            rc=$?
+            if [ $rc -eq 0 ]; then
+              echo "Build succeeded on attempt $attempt"
+              break
+            fi
+            echo "Build failed (exit $rc). Sleeping before retry..."
+            sleep $((attempt * 10))
+            attempt=$((attempt + 1))
+          done
+          if [ $rc -ne 0 ]; then
+            echo "Build failed after $retries attempts; run with --stacktrace locally or check runner network access."
+            exit $rc
+          fi
+
+      - name: Collect jars
+        id: gather
+        run: |
+          mkdir -p release_artifacts
+          find . -path '*/build/libs/*.jar' \
+            ! -name '*-sources.jar' \
+            ! -name '*-javadoc.jar' \
+            ! -name '*-common-*.jar' \
+            ! -name 'buildSrc.jar' -print0 | xargs -0 -I{} cp {} release_artifacts/ || true
+          ls -la release_artifacts
+          # product JSON array of filenames for matrix usage
+          files_json=$(cd release_artifacts && python3 -c "import json,glob; print(json.dumps(sorted(glob.glob('*.jar'))))")
+          echo "files_json=$files_json" >> $GITHUB_OUTPUT
+
+      - name: Upload jars artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars
+          path: release_artifacts
+
+  attest:
+    name: Attest collected jars
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        artifact: ${{ fromJson(needs.build-and-release.outputs.files_json) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download jars artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jars
+          path: ./downloaded-jars
+
+      - name: Locate downloaded jar
+        id: locate
+        run: |
+          echo "Listing `./downloaded-jars`:"
+          ls -laR ./downloaded-jars || true
+          p=$(find ./downloaded-jars -type f -name "${{ matrix.artifact }}" -print -quit || true)
+          if [ -z "$p" ]; then
+            echo "ERROR: could not find `./downloaded-jars/${{ matrix.artifact }}`" >&2
+            exit 1
+          fi
+          echo "Found: $p"
+          echo "subject_path=$p" >> $GITHUB_OUTPUT
+
+      - name: Attest artifact
+        id: attest
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: ${{ steps.locate.outputs.subject_path }}
+          push-to-registry: false
+          show-summary: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Record attestation link
+        shell: bash
+        run: |
+          mkdir -p attestations
+
+          # try common output names (including hyphenated key)
+          url="${{ steps.attest.outputs['attestation-url'] }}"
+          if [ -z "$url" ]; then url="${{ steps.attest.outputs.attestation_url }}"; fi
+          if [ -z "$url" ]; then url="${{ steps.attest.outputs.attestation_ref }}"; fi
+          if [ -z "$url" ]; then url="${{ steps.attest.outputs.attestation_uri }}"; fi
+          if [ -z "$url" ]; then url="${{ steps.attest.outputs.uri }}"; fi
+
+          # write only "artifact URL" (URL may be empty)
+          echo "${{ matrix.artifact }} $url" > attestations/${{ matrix.artifact }}.attestation.txt
+
+          echo "Wrote attestations/${{ matrix.artifact }}.attestation.txt"
+
+      - name: Upload attestations record
+        uses: actions/upload-artifact@v4
+        with:
+          name: attestations-${{ matrix.artifact }}
+          path: attestations/${{ matrix.artifact }}.attestation.txt
+          if-no-files-found: warn
+          overwrite: true
+
+  create-release:
+    name: Create GitHub release and upload jars + attestation links
+    needs: [build-and-release, attest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download jars
+        uses: actions/download-artifact@v4
+        with:
+          name: jars
+          path: ./release_artifacts
+
+      - name: Flatten downloaded jars
+        run: |
+          mkdir -p release_artifacts_flat
+          find release_artifacts -type f -name '*.jar' -print0 | xargs -0 -I{} cp {} release_artifacts_flat/ || true
+          ls -la release_artifacts_flat
+
+      - name: Download attestations (all)
+        uses: actions/download-artifact@v4
+        with:
+          path: ./attestations
+
+      - name: Build release body with attestations
+        id: body
+        run: |
+          echo "Release v${{ needs.build-and-release.outputs.mod }} from branch ${{ needs.build-and-release.outputs.branch }}" > release_body.txt
+          echo "" >> release_body.txt
+
+          if [ -d attestations ]; then
+            printf '%s\n' "Attestations:" >> release_body.txt
+            find attestations -type f -name '*.attestation.txt' -print0 | while IFS= read -r -d '' f; do
+              base=$(basename "$f" .attestation.txt)
+              url=$(cut -d' ' -f2- < "$f")
+              if [ -n "$url" ]; then
+                printf '%s\n' "- [$base]($url)" >> release_body.txt
+              else
+                printf '%s\n' "- $base" >> release_body.txt
+              fi
+            done
+          else
+            printf '%s\n' "No attestations found." > release_body.txt
+          fi
+
+          RELEASE_BODY=$(cat release_body.txt)
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "$RELEASE_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub release and upload jars
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Item Frame Lock @ v${{ needs.build-and-release.outputs.mod }} (MC ${{ needs.build-and-release.outputs.branch }})
+          body: ${{ steps.body.outputs.body }}
+          files: release_artifacts_flat/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

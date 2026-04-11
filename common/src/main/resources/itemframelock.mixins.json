@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "org.hedgetech.itemframelock.mixin",
+  "minVersion": "0.8",
+  "refmap": "${mod_id}.refmap.json",
+  "client": [],
+  "mixins": [
+    "ItemFrameEntityMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
