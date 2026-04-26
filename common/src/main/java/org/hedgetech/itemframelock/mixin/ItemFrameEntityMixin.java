@@ -45,6 +45,9 @@ public class ItemFrameEntityMixin {
 
         // If the item frame has already been waxed, and we are interacting with an axe, remove wax / fixed state
         if (this.fixed) {
+            // If player is crouching, act natural!
+            if (player.isCrouching()) return;
+
             if (heldItem.getItem() instanceof AxeItem) {
                 frame.playSound(SoundEvents.AXE_WAX_OFF, 1.0F, 1.0F);
                 frame.level().levelEvent(LevelEvent.PARTICLES_WAX_OFF, frame.getPos(), 0);
