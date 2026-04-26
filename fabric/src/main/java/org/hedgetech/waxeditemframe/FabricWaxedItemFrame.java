@@ -1,15 +1,11 @@
-package org.hedgetech.itemframelock;
+package org.hedgetech.waxeditemframe;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import org.hedgetech.itemframelock.commands.CommandRegistry;
 
 /**
  * Fabric Server Entry Point
  */
-public class FabricItemFrameLock implements ModInitializer {
+public class FabricWaxedItemFrame implements ModInitializer {
     
     @Override
     public void onInitialize() {
@@ -42,5 +38,5 @@ public class FabricItemFrameLock implements ModInitializer {
     /**
      * Default Constructor
      */
-    public FabricItemFrameLock() { }
+    public FabricWaxedItemFrame() { }
 }

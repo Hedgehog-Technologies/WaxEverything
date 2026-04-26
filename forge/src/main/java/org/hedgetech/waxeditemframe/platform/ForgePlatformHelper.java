@@ -1,6 +1,6 @@
-package org.hedgetech.itemframelock.platform;
+package org.hedgetech.waxeditemframe.platform;
 
-import org.hedgetech.itemframelock.platform.services.IPlatformHelper;
+import org.hedgetech.waxeditemframe.platform.services.IPlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 

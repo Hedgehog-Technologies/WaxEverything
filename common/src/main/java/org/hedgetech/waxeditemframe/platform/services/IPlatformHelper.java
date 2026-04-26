@@ -1,4 +1,4 @@
-package org.hedgetech.itemframelock.platform.services;
+package org.hedgetech.waxeditemframe.platform.services;
 
 /**
  * Platform Helper Interface

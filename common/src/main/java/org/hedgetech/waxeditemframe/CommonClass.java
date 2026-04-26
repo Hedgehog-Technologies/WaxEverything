@@ -1,4 +1,4 @@
-package org.hedgetech.itemframelock;
+package org.hedgetech.waxeditemframe;
 
 /**
  * This class is part of the common project meaning it is shared between all supported loaders. Code written here can only

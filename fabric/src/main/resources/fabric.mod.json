@@ -13,11 +13,11 @@
         "issues": "${issue_url}"
     },
     "license": "${license}",
-    "icon": "assets/itemframelock/textures/gui/${mod_id}.png",
+    "icon": "assets/waxeditemframe/textures/gui/${mod_id}.png",
     "environment": "*",
     "entrypoints": {
         "main": [
-            "org.hedgetech.itemframelock.FabricItemFrameLock"
+            "org.hedgetech.waxeditemframe.FabricWaxedItemFrame"
         ]
     },
     "mixins": [

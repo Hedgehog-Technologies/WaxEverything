@@ -1,4 +1,4 @@
-package org.hedgetech.itemframelock.commands;
+package org.hedgetech.waxeditemframe.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;

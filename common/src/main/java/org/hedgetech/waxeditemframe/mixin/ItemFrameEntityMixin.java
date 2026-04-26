@@ -1,4 +1,4 @@
-package org.hedgetech.itemframelock.mixin;
+package org.hedgetech.waxeditemframe.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import org.hedgetech.itemframelock.Constants;
+import org.hedgetech.waxeditemframe.Constants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,9 +39,9 @@ public class ItemFrameEntityMixin {
         // Nothing is in the frame, so we don't care about setting fixed state
         if (isEmpty) return;
 
-        Constants.LOG.info("Interacting with item frame at {}, fixed state: {}, held item: {}", frame.getPos(), this.fixed, heldItem);
-        Constants.LOG.info("Item frame position: {}; Supporting block position: {}; relative: {}", frame.getPos(), frame.getOnPos(), frame.getPos().relative(frame.getDirection().getOpposite()));
-        Constants.LOG.info("Item frame opposite direction: {}; step: {}", frame.getDirection().getOpposite(), frame.getDirection().getOpposite().step());
+//        Constants.LOG.info("Interacting with item frame at {}, fixed state: {}, held item: {}", frame.getPos(), this.fixed, heldItem);
+//        Constants.LOG.info("Item frame position: {}; Supporting block position: {}; relative: {}", frame.getPos(), frame.getOnPos(), frame.getPos().relative(frame.getDirection().getOpposite()));
+//        Constants.LOG.info("Item frame opposite direction: {}; step: {}", frame.getDirection().getOpposite(), frame.getDirection().getOpposite().step());
 
         // If the item frame has already been waxed, and we are interacting with an axe, remove wax / fixed state
         if (this.fixed) {

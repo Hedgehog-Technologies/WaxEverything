@@ -1,28 +1,23 @@
-package org.hedgetech.itemframelock;
+package org.hedgetech.waxeditemframe;
 
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import org.hedgetech.itemframelock.commands.CommandRegistry;
-
-import java.util.Objects;
+import org.hedgetech.waxeditemframe.commands.CommandRegistry;
 
 /**
  * NeoForge Entry Point
  */
 @Mod(Constants.MOD_ID)
-public class NeoForgeItemFrameLock {
+public class NeoForgeWaxedItemFrame {
     /**
      * Constructor - entry point for NeoForge Mod Loader
      * @param eventBus - NeoForge EventBus
      */
-    public NeoForgeItemFrameLock(IEventBus eventBus) {
+    public NeoForgeWaxedItemFrame(IEventBus eventBus) {
 
         // This method is invoked by the NeoForge mod loader when it is ready
         // to load your mod. You can access NeoForge and Common code in this

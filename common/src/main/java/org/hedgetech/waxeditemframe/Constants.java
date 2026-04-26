@@ -1,4 +1,4 @@
-package org.hedgetech.itemframelock;
+package org.hedgetech.waxeditemframe;
 
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
@@ -11,12 +11,12 @@ public final class Constants {
 	/**
 	 * Mod Id - should be all lowercase
 	 */
-	public static final String MOD_ID = "itemframelock";
+	public static final String MOD_ID = "waxeditemframe";
 
 	/**
 	 * Mod Name - Should be PascalCase
 	 */
-	public static final String MOD_NAME = "ItemFrameLock";
+	public static final String MOD_NAME = "WaxedItemFrame";
 
 	/**
 	 * Logger - To make more consistent logging instead of using stdout
