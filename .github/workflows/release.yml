@@ -220,7 +220,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          name: Item Frame Lock @ v${{ needs.build-and-release.outputs.mod }} (MC ${{ needs.build-and-release.outputs.branch }})
+          name: Waxed Item Frame @ v${{ needs.build-and-release.outputs.mod }} (MC ${{ needs.build-and-release.outputs.branch }})
           body: ${{ steps.body.outputs.body }}
           files: release_artifacts_flat/*.jar
         env:
