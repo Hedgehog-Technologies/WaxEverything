@@ -6,11 +6,7 @@
 ![](https://img.shields.io/badge/Loader-Fabric_%2b_Forge_%2b_NeoForge-darkgreen)
 ![](https://img.shields.io/badge/Supports_Versions-26.1.x-darkgreen)
 
-[//]: # ([<img src="https://img.shields.io/curseforge/game-versions/1526500?label=CurseForge"/>]&#40;https://www.curseforge.com/minecraft/mc-mods/waxed-item-frame&#41;)
-
-[//]: # ([<img src="https://img.shields.io/modrinth/v/engAoM9N?label=Modrinth"/>]&#40;https://modrinth.com/mod/waxeditemframe&#41;)
-
-A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on it. "Locked" item frames cannot have items rotated or removed and will allow players to click "through" the item frame to interact with the block behind it instead of the item frame itself.
+A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on it. Waxed Item Frames cannot have items rotated or removed and will allow players to click "through" the item frame to interact with the block behind it instead of the item frame itself.
 
 ## Key Features
 ### 1.0.0
@@ -18,8 +14,8 @@ A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on i
 
 ## Usage
 1. Apply Honeycomb directly to item frame (with an item in it) to "lock" it
-2. Right-clicking on (using) a "locked" item frame will attempt to click through the item frame and interact with the block behind it instead of the item frame itself
-3. Using an axe on a "locked" item frame to "unlock" it
+2. Right-clicking on (using) a waxed item frame will attempt to click through the item frame and interact with the block behind it instead of the item frame itself
+3. Using an axe on a waxed Item Frame to "unlock" it
 
 ## Dependencies
 - Minecraft: `26.1.x`
