@@ -4,6 +4,7 @@
 
 ![](https://img.shields.io/badge/Environment-server%2c%20opt%20client-c65135)
 ![](https://img.shields.io/badge/Loader-Fabric_%2b_Forge_%2b_NeoForge-darkgreen)
+![](https://img.shields.io/badge/Supports_Versions-26.1.x-darkgreen)
 
 [//]: # ([<img src="https://img.shields.io/curseforge/game-versions/1526500?label=CurseForge"/>]&#40;https://www.curseforge.com/minecraft/mc-mods/waxed-item-frame&#41;)
 
