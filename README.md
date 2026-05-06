@@ -8,14 +8,14 @@
 
 A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on it. Waxed Item Frames cannot have items rotated or removed and will allow players to click "through" the item frame to interact with the block behind it instead of the item frame itself.
 
-## Key Features
-### 1.0.0
-- Initial Release
-
 ## Usage
 1. Apply Honeycomb directly to item frame (with an item in it) to "lock" it
 2. Right-clicking on (using) a waxed item frame will attempt to click through the item frame and interact with the block behind it instead of the item frame itself
 3. Using an axe on a waxed Item Frame to "unlock" it
+
+## Release Notes
+### 1.0.0
+- Initial Release
 
 ## Dependencies
 - Minecraft: `26.1.x`
