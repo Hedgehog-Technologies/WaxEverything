@@ -15,9 +15,9 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.*;
-import org.hedgetech.waxeditemframe.Constants;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -59,7 +59,7 @@ public class ItemFrameEntityMixin {
             }
 
             // If the frame is fixed, we want to attempt to interact with the first reachable target beyond the frame
-            InteractionResult forwarded = interactFirstTargetBeyondLockedFrame(player, frame, hand, heldItem);
+            InteractionResult forwarded = waxedItemFrame$interactFirstTargetBeyondLockedFrame(player, frame, hand, heldItem);
             cir.setReturnValue(forwarded.consumesAction() ? forwarded : InteractionResult.SUCCESS);
             return;
         }
@@ -75,7 +75,8 @@ public class ItemFrameEntityMixin {
         }
     }
 
-    private static InteractionResult interactFirstTargetBeyondLockedFrame(Player player, ItemFrame frame, InteractionHand hand, ItemStack heldItem) {
+    @Unique
+    private static InteractionResult waxedItemFrame$interactFirstTargetBeyondLockedFrame(Player player, ItemFrame frame, InteractionHand hand, ItemStack heldItem) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getLookAngle().normalize();
 
