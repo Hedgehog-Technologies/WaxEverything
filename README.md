@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/badge/Environment-server%2c%20opt%20client-c65135)
 ![](https://img.shields.io/badge/Loader-Fabric_%2b_Forge_%2b_NeoForge-darkgreen)
-![](https://img.shields.io/badge/Supports_Versions-26.1.x-darkgreen)
+![](https://img.shields.io/badge/Supports_Versions-26.2.x-darkgreen)
 
 A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on it. Waxed Item Frames cannot have items rotated or removed and will allow players to click "through" the item frame to interact with the block behind it instead of the item frame itself.
 
@@ -14,18 +14,20 @@ A Minecraft mod to allow players to "lock" an item frame by using Honeycomb on i
 3. Using an axe on a waxed Item Frame to "unlock" it
 
 ## Release Notes
+### 1.0.1
+- Removed extraneous quotation mark prevent Fabric from loading the mod
 ### 1.0.0
 - Initial Release
 
 ## Dependencies
-- Minecraft: `26.1.x`
+- Minecraft: `26.2.x`
 
 ### Mod Loader
-- Fabric: `0.18.4`
+- Fabric: `0.19.0`
 OR
-- Forge: `62.0.9`
+- Forge: `65.0.1`
 OR
-- NeoForge: `26.1.0.19-beta`
+- NeoForge: `26.2.0.7-beta`
 
 [<img alt="Support me on Ko-fi" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/donate/kofi-singular-alt_vector.svg"/>](https://ko-fi.com/jag3dagster)
 [<img alt="Chat with me in Discord" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/social/discord-plural_vector.svg"/>](https://discord.gg/sJggphj5UX)
