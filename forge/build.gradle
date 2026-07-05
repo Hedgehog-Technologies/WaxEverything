@@ -112,7 +112,7 @@ sourceSets.each {
 jar {
     manifest {
         attributes([
-                "MixinConfigs" : "waxeditemframe.mixins.json"
+                "MixinConfigs" : "waxeverything.mixins.json"
         ])
     }
 }
