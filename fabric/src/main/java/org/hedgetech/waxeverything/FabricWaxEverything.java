@@ -1,6 +1,15 @@
 package org.hedgetech.waxeverything;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import org.hedgetech.waxeverything.network.SyncWaxStatePacket;
+import org.hedgetech.waxeverything.network.SyncWaxedChunkPacket;
+import org.hedgetech.waxeverything.network.WaxNetworkHelper;
+import org.hedgetech.waxeverything.saveddata.WaxManager;
 
 /**
  * Fabric Server Entry Point
@@ -9,34 +18,38 @@ public class FabricWaxEverything implements ModInitializer {
     
     @Override
     public void onInitialize() {
-        
-        // This method is invoked by the Fabric mod loader when it is ready
-        // to load your mod. You can access Fabric and Common code in this
-        // project.
-
-        // Use Fabric to bootstrap the Common mod.
-//        Constants.LOG.info("Hello Fabric world!");
         CommonClass.init();
+        registerPackets();
+        registerServerEvents();
+    }
 
-//        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-//                CommandRegistry.registerCommands(dispatcher)
-//        );
-//
-//        ServerPlayConnectionEvents.DISCONNECT.register((serverPlayNetworkHandler, minecraftServer) ->
-//                ItemFrameLock.savePlayer(serverPlayNetworkHandler.getPlayer(), minecraftServer)
-//        );
-//
-//        ServerPlayConnectionEvents.JOIN.register((serverPlayNetworkHandler, packetSender, minecraftServer) ->
-//                ItemFrameLock.initPlayer(serverPlayNetworkHandler.getPlayer(), minecraftServer)
-//        );
-//
-//        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) ->
-//                ItemFrameLock.onPlayerRespawn(oldPlayer.getStringUUID(), newPlayer)
-//        );
+    private static void registerPackets() {
+        PayloadTypeRegistry.clientboundPlay().register(SyncWaxedChunkPacket.TYPE, SyncWaxedChunkPacket.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncWaxStatePacket.TYPE, SyncWaxStatePacket.STREAM_CODEC);
+    }
+
+    private static void registerServerEvents() {
+        ServerChunkEvents.CHUNK_LOAD.register((level, chunk, generated) -> {
+            WaxManager.onChunkLoad(level, chunk.getPos());
+            for (ServerPlayer player : level.players()) {
+                WaxNetworkHelper.sendChunkSync(level, chunk.getPos(), player);
+            }
+        });
+
+        ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> {
+            WaxManager.onChunkUnload(level, chunk.getPos());
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ServerPlayer player = handler.getPlayer();
+            ServerLevel serverLevel = player.level();
+            WaxNetworkHelper.sendAllLoadedChunksToPlayer(serverLevel, player);
+        });
     }
 
     /**
      * Default Constructor
      */
-    public FabricWaxEverything() { }
+    public FabricWaxEverything() {}
+
 }

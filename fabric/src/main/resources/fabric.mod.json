@@ -18,6 +18,9 @@
     "entrypoints": {
         "main": [
             "org.hedgetech.waxeverything.FabricWaxEverything"
+        ],
+        "client": [
+            "org.hedgetech.waxeverything.FabricClientWaxEverything"
         ]
     },
     "mixins": [
