@@ -3,9 +3,15 @@
   "package": "org.hedgetech.waxeverything.mixin",
   "minVersion": "0.8",
   "refmap": "${mod_id}.refmap.json",
-  "client": [],
+  "client": [
+    "ClientLevelMixin"
+  ],
   "mixins": [
-    "HoneycombItemMixin"
+    "AxeItemMixin",
+    "HoneycombItemMixin",
+    "LevelMixin",
+    "PistonBaseBlockMixin",
+    "ShelfBlockMixin"
   ],
   "server": [],
   "injectors": {

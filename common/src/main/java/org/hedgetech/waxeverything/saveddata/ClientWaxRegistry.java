@@ -1,9 +1,11 @@
 package org.hedgetech.waxeverything.saveddata;
 
+import it.unimi.dsi.fastutil.longs.LongConsumer;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
+import org.hedgetech.waxeverything.Constants;
 
 import java.util.HashMap;
 
@@ -12,6 +14,7 @@ public final class ClientWaxRegistry {
     private static final HashMap<Long, LongSet> chunkData = new HashMap<>();
 
     public static void onChunkSync(long chunkPos, long[] blockPositions) {
+        Constants.LOG.info("Chunk Sync: {}; Block Positions: {}", chunkPos, blockPositions.length);
         if (blockPositions.length == 0) {
             chunkData.remove(chunkPos);
             return;
@@ -23,6 +26,7 @@ public final class ClientWaxRegistry {
     }
 
     public static void onWaxStateUpdate(long packedBlockPos, boolean waxed) {
+        Constants.LOG.info("Wax State Update: {}; Waxed: {}", packedBlockPos, waxed);
         BlockPos pos = BlockPos.of(packedBlockPos);
         long chunkKey = ChunkPos.pack(pos.getX() >> 4, pos.getZ() >> 4);
 
@@ -49,6 +53,10 @@ public final class ClientWaxRegistry {
 
     public static void clear() {
         chunkData.clear();
+    }
+
+    public static void forEachWaxedBlock(LongConsumer consumer) {
+        chunkData.values().forEach(set -> set.forEach(consumer));
     }
 
     private ClientWaxRegistry() {}
