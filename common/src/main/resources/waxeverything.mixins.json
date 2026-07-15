@@ -11,7 +11,8 @@
     "HoneycombItemMixin",
     "LevelMixin",
     "PistonBaseBlockMixin",
-    "ShelfBlockMixin"
+    "ShelfBlockMixin",
+    "invokers.ShelfBlockInvoker"
   ],
   "server": [],
   "injectors": {

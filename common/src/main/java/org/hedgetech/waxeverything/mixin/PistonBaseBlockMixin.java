@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
 import org.hedgetech.waxeverything.saveddata.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -19,6 +20,7 @@ import java.util.List;
 @Mixin(PistonBaseBlock.class)
 public class PistonBaseBlockMixin {
 
+    @Unique
     private static final ThreadLocal<List<BlockPos>> PENDING_MOVES =
             ThreadLocal.withInitial(ArrayList::new);
 
