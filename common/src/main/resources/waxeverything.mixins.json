@@ -7,8 +7,8 @@
     "ClientLevelMixin"
   ],
   "mixins": [
-    "AnvilBlockMixin",
     "AxeItemMixin",
+    "BlockStateBaseMixin",
     "FallingBlockEntityMixin",
     "HoneycombItemMixin",
     "LevelMixin",
