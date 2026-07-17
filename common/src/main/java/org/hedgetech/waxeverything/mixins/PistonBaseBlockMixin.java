@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixin;
+package org.hedgetech.waxeverything.mixins;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;

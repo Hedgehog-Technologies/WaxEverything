@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixin.invokers;
+package org.hedgetech.waxeverything.mixins.invokers;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

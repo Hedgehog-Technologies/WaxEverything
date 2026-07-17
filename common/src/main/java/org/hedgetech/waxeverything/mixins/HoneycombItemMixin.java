@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixin;
+package org.hedgetech.waxeverything.mixins;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -8,10 +8,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.ShelfBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.hedgetech.waxeverything.WaxEverything;
-import org.hedgetech.waxeverything.mixin.invokers.ShelfBlockInvoker;
+import org.hedgetech.waxeverything.mixins.invokers.ShelfBlockInvoker;
 import org.hedgetech.waxeverything.saveddata.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,8 +43,11 @@ public class HoneycombItemMixin {
             WaxManager.wax(serverLevel, pos);
             serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, pos, 0);
 
-            if (state.getBlock() instanceof ShelfBlock sb) {
+            var block = state.getBlock();
+            if (block instanceof ShelfBlock sb) {
                 ((ShelfBlockInvoker) sb).waxeverything$invokeNeighborChanged(state, level, pos, sb, null, false);
+            } else if (block instanceof RedstoneTorchBlock) {
+                level.setBlock(pos, state.setValue(BlockStateProperties.LIT, false), 3);
             }
 
             if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {

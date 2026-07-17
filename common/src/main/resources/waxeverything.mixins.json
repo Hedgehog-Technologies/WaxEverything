@@ -1,16 +1,19 @@
 {
   "required": true,
-  "package": "org.hedgetech.waxeverything.mixin",
+  "package": "org.hedgetech.waxeverything.mixins",
   "minVersion": "0.8",
   "refmap": "${mod_id}.refmap.json",
   "client": [
     "ClientLevelMixin"
   ],
   "mixins": [
+    "AnvilBlockMixin",
     "AxeItemMixin",
+    "FallingBlockEntityMixin",
     "HoneycombItemMixin",
     "LevelMixin",
     "PistonBaseBlockMixin",
+    "RedstoneTorchBlockMixin",
     "ShelfBlockMixin",
     "invokers.ShelfBlockInvoker"
   ],

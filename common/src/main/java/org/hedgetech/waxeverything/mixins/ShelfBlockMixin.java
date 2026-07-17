@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixin;
+package org.hedgetech.waxeverything.mixins;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;

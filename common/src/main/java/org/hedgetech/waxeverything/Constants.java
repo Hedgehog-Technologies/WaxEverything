@@ -22,6 +22,8 @@ public final class Constants {
 	 */
 	public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
+	public static final String WAXED_TAG_NAME = MOD_ID + ":waxed";
+
 	private Constants() {
 		throw new UnsupportedOperationException("Static Utility class, no need to instantiate");
 	}

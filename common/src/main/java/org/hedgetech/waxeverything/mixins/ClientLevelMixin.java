@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixin;
+package org.hedgetech.waxeverything.mixins;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
