@@ -11,6 +11,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.phys.AABB;
 import org.hedgetech.waxeverything.Constants;
+import org.hedgetech.waxeverything.config.WaxEverythingConfig;
+
+import java.awt.*;
 
 public final class WaxOverlayRenderer {
     private static final Identifier KEY_CATEGORY_IDENTIFIER = Identifier.fromNamespaceAndPath(Constants.MOD_ID, "key.categories.waxeverything");
@@ -24,17 +27,32 @@ public final class WaxOverlayRenderer {
             KEY_CATEGORY
     );
 
+    private static float cachedRed;
+    private static float cachedGreen;
+    private static float cachedBlue;
+    private static float cachedEdgeWidth;
+
+    public static void init() {
+        WaxEverythingConfig.registerReloadListener(WaxOverlayRenderer::updateCache);
+        updateCache();
+    }
+
+    private static void updateCache() {
+        var overlayColor = WaxEverythingConfig.CONFIG.overlayColor();
+        cachedRed = overlayColor.getRed() / 255.0F;
+        cachedGreen = overlayColor.getGreen() / 255.0F;
+        cachedBlue = overlayColor.getBlue() / 255.0F;
+        cachedEdgeWidth = WaxEverythingConfig.CONFIG.edgeWidth;
+    }
+
     public static void render(PoseStack poseStack, SubmitNodeCollector collector) {
         var box = new AABB(0, 0, 0, 1, 1, 1).inflate(0.005);
-        float r = 1.0F, g = 0.65F, b = 0.0F, a = 0.8F;
 
-        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) -> {
-            drawWireframeBox(pose, buffer, box, r, g, b, 1.0F);
-        });
+        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) ->
+                drawWireframeBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 1.0F));
 
-        collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) -> {
-            drawFilledBox(pose, buffer, box, r, g, b, a);
-        });
+        collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) ->
+                drawFilledBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 0.8F));
     }
 
     private static void drawWireframeBox(PoseStack.Pose pose, VertexConsumer buffer, AABB box, float r, float g, float b, float a) {
@@ -132,6 +150,6 @@ public final class WaxOverlayRenderer {
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightCoordsUtil.FULL_BRIGHT)
                 .setNormal(pose, nx, ny, nz)
-                .setLineWidth(2.0F);
+                .setLineWidth(cachedEdgeWidth);
     }
 }

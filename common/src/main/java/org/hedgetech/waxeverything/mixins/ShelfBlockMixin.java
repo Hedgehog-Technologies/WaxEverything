@@ -32,10 +32,9 @@ public class ShelfBlockMixin {
             BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult,
             CallbackInfoReturnable<InteractionResult> cir
     ) {
-        var isWaxed = WaxEverything.isWaxed(level, pos);
-        if (!isWaxed) return;
-
-        cir.setReturnValue(InteractionResult.FAIL);
+        if (WaxEverything.isWaxed(level, pos)) {
+            cir.setReturnValue(InteractionResult.SUCCESS);
+        }
     }
 
     @Inject(method = "neighborChanged", at = @At("HEAD"))

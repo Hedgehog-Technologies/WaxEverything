@@ -9,6 +9,7 @@
   "mixins": [
     "AbstractFurnaceBlockMixin",
     "AxeItemMixin",
+    "BeaconBlockMixin",
     "BlockStateBaseMixin",
     "FallingBlockEntityMixin",
     "HoneycombItemMixin",

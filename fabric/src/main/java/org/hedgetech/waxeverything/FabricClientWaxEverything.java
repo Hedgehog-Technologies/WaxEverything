@@ -16,6 +16,7 @@ public class FabricClientWaxEverything implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        WaxOverlayRenderer.init();
         registerClientPacketHandlers();
         registerClientEvents();
         registerKeybinds();

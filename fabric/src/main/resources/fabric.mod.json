@@ -21,6 +21,9 @@
         ],
         "client": [
             "org.hedgetech.waxeverything.FabricClientWaxEverything"
+        ],
+        "modmenu": [
+            "org.hedgetech.waxeverything.ui.FabricConfigUI"
         ]
     },
     "mixins": [
@@ -33,7 +36,8 @@
         "java": ">=${java_version}"
     },
     "suggests": {
-        "another-mod": "*"
+        "yet_another_config_lib_v3": ">=${yacl_version}",
+        "modmenu": ">=${modmenu_version}"
     }
 }
   
