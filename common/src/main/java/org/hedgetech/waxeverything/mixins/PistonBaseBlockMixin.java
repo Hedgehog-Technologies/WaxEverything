@@ -6,7 +6,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.piston.PistonHeadBlock;
+import net.minecraft.world.level.block.piston.PistonMovingBlockEntity;
 import net.minecraft.world.level.block.piston.PistonStructureResolver;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.hedgetech.waxeverything.Constants;
+import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.saveddata.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -68,6 +74,47 @@ public class PistonBaseBlockMixin {
             }
         } finally {
             pending.clear();
+        }
+    }
+
+    @Inject(method = "triggerEvent", at = @At("HEAD"))
+    private void waxeverything$handleRetractEvent(BlockState state, Level level, BlockPos pos, int b0, int b1, CallbackInfoReturnable<Boolean> cir) {
+        if (level.isClientSide()) return;
+
+        if (WaxEverything.isWaxed(level, pos)) {
+            var direction = state.getValue(BlockStateProperties.FACING);
+            var neighborPos = pos.relative(direction);
+            var neighborBlock = level.getBlockState(neighborPos).getBlock();
+
+            // 0 = do extend, 1 = do retract, 2 = do movement (?)
+            if (b0 == 1 || b0 == 2) {
+                Constants.LOG.info("WaxEverything: Piston at {} retracted ({}), checking neighbor at {} for wax", pos, b0, neighborPos);
+                if (WaxEverything.isWaxed(level, neighborPos)) {
+                    Constants.LOG.info("WaxEverything: Neighbor at {} is waxed, unwaxing it now", neighborPos);
+                    WaxManager.unwax((ServerLevel) level, neighborPos);
+                }
+            }
+        }
+    }
+
+    @Inject(method = "triggerEvent", at = @At("RETURN"))
+    private void waxeverything$handleExtendEvent(BlockState state, Level level, BlockPos pos, int b0, int b1, CallbackInfoReturnable<Boolean> cir) {
+        if (level.isClientSide()) return;
+
+        if (WaxEverything.isWaxed(level, pos)) {
+            var direction = state.getValue(BlockStateProperties.FACING);
+            var neighborPos = pos.relative(direction);
+            var neighborBlock = level.getBlockState(neighborPos).getBlock();
+            var neighborEntity = level.getBlockEntity(neighborPos);
+
+            // 0 = do extend, 1 = do retract, 2 = do movement (?)
+            if (b0 == 0) {
+                Constants.LOG.info("WaxEverything: Piston at {} extended, checking neighbor at {} for wax", pos, neighborPos);
+                if (neighborEntity instanceof PistonMovingBlockEntity && !WaxEverything.isWaxed(level, neighborPos)) {
+                    Constants.LOG.info("WaxEverything: Neighbor at {} is a PistonHeadBlock and is not waxed, waxing it now", neighborPos);
+                    WaxManager.wax((ServerLevel) level, neighborPos);
+                }
+            }
         }
     }
 }

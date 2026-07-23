@@ -1,5 +1,6 @@
 package org.hedgetech.waxeverything.mixins;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -10,6 +11,8 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.RedstoneTorchBlock;
 import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import org.hedgetech.waxeverything.WaxEverything;
@@ -58,6 +61,18 @@ public class AxeItemMixin {
                         serverLevel.playSound(null, neighborPos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
                         serverLevel.levelEvent(LevelEvent.PARTICLES_WAX_OFF, neighborPos, 0);
                     }
+                }
+                case PistonBaseBlock _, PistonHeadBlock _ -> {
+                    BlockPos neighborPos;
+                    if (block instanceof PistonBaseBlock) {
+                        neighborPos = pos.relative(state.getValue(PistonBaseBlock.FACING));
+                    } else {
+                        neighborPos = pos.relative(state.getValue(PistonHeadBlock.FACING).getOpposite());
+                    }
+
+                    WaxManager.unwax(serverLevel, neighborPos);
+                    serverLevel.playSound(null, neighborPos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    serverLevel.levelEvent(LevelEvent.PARTICLES_WAX_OFF, neighborPos, 0);
                 }
                 default -> {
                 }

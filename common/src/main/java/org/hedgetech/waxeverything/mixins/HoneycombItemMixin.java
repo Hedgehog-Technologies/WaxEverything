@@ -7,6 +7,8 @@ import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
@@ -29,8 +31,7 @@ public class HoneycombItemMixin {
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
 
-        if (state.is(Blocks.PISTON_HEAD)
-                || state.is(Blocks.MOVING_PISTON)) return;
+        if (state.is(Blocks.MOVING_PISTON)) return;
 
         var alreadyWaxed = WaxEverything.isWaxed(level, pos);
         if (alreadyWaxed) return;
@@ -55,6 +56,17 @@ public class HoneycombItemMixin {
                         WaxManager.wax(serverLevel, neighborPos);
                         serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, neighborPos, 0);
                     }
+                }
+                case PistonBaseBlock _, PistonHeadBlock _ -> {
+                    BlockPos neighborPos;
+                    if (block instanceof PistonBaseBlock) {
+                        neighborPos = pos.relative(state.getValue(PistonBaseBlock.FACING));
+                    } else {
+                        neighborPos = pos.relative(state.getValue(PistonHeadBlock.FACING).getOpposite());
+                    }
+
+                    WaxManager.wax(serverLevel, neighborPos);
+                    serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, neighborPos, 0);
                 }
                 default -> {
                 }

@@ -32,7 +32,7 @@ public class ClientLevelMixin {
         var waxed = ClientWaxRegistry.isWaxed(pos);
 
         if (waxed) {
-            Constants.LOG.info("Waxed Pos: {}", pos);
+            Constants.LOG.trace("Waxed Pos: {}", pos);
             return;
         }
 
