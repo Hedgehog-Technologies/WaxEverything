@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.ShelfBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
+import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -33,6 +34,7 @@ public class ShelfBlockMixin {
             CallbackInfoReturnable<InteractionResult> cir
     ) {
         if (WaxEverything.isWaxed(level, pos)) {
+            Constants.LOG.debug("Shelf at {} is waxed, preventing interaction.", pos);
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }

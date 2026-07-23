@@ -17,7 +17,11 @@
     "PistonBaseBlockMixin",
     "RedstoneTorchBlockMixin",
     "ShelfBlockMixin",
-    "invokers.ShelfBlockInvoker"
+    "invokers.ShelfBlockInvoker",
+    "storageblocks.BarrelBlockMixin",
+    "storageblocks.ChestBlockMixin",
+    "storageblocks.EnderChestBlockMixin",
+    "storageblocks.ShulkerBoxBlockMixin"
   ],
   "server": [],
   "injectors": {

@@ -39,7 +39,7 @@ public class FabricClientWaxEverything implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
                 ClientWaxRegistry.clear());
 
-        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
+        LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> {
             if (!WaxOverlayRenderer.KEY_SHOW_WAXED.isDown()) return;
 
             var camera = context.levelState().cameraRenderState;

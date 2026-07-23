@@ -18,11 +18,25 @@ public class WaxEverythingConfig {
     public static final Path CONFIG_PATH = Paths.get("config").resolve("waxeverything.json");
     public static final String DEFAULT_OVERLAY_COLOR_HEX = "0xFFAE00";
     public static final Color DEFAULT_OVERLAY_COLOR = Color.decode(DEFAULT_OVERLAY_COLOR_HEX);
-    public static final boolean DEFAULT_STORAGE_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_CHEST_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_COPPER_CHEST_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_TRAPPED_CHEST_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_BARREL_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_ENDER_CHEST_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_SHULKER_BOX_LOCKED_WHEN_WAXED = false;
+    public static final boolean DEFAULT_WAX_PREVENTS_CHEST_COMBINE = true;
+    public static final boolean DEFAULT_WAX_PREVENTS_COPPER_CHEST_COMBINE = false;
 
     public int overlayColorInt = DEFAULT_OVERLAY_COLOR.getRGB();
-    public float edgeWidth = 2.0F;
-    public boolean storageLockedWhenWaxed = DEFAULT_STORAGE_LOCKED_WHEN_WAXED;
+//    public float edgeWidth = 2.0F;
+    public boolean chestLockedWhenWaxed = DEFAULT_CHEST_LOCKED_WHEN_WAXED;
+    public boolean copperChestLockedWhenWaxed = DEFAULT_COPPER_CHEST_LOCKED_WHEN_WAXED;
+    public boolean trappedChestLockedWhenWaxed = DEFAULT_TRAPPED_CHEST_LOCKED_WHEN_WAXED;
+    public boolean barrelLockedWhenWaxed = DEFAULT_BARREL_LOCKED_WHEN_WAXED;
+    public boolean enderChestLockedWhenWaxed = DEFAULT_ENDER_CHEST_LOCKED_WHEN_WAXED;
+    public boolean shulkerBoxLockedWhenWaxed = DEFAULT_SHULKER_BOX_LOCKED_WHEN_WAXED;
+    public boolean waxPreventsChestCombine = DEFAULT_WAX_PREVENTS_CHEST_COMBINE;
+    public boolean waxPreventsCopperChestCombine = DEFAULT_WAX_PREVENTS_COPPER_CHEST_COMBINE;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     private static final List<Runnable> RELOAD_LISTENERS = new ArrayList<>();

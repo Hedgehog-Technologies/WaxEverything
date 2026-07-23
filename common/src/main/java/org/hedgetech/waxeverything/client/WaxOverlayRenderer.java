@@ -30,7 +30,7 @@ public final class WaxOverlayRenderer {
     private static float cachedRed;
     private static float cachedGreen;
     private static float cachedBlue;
-    private static float cachedEdgeWidth;
+    // private static float cachedEdgeWidth;
 
     public static void init() {
         WaxEverythingConfig.registerReloadListener(WaxOverlayRenderer::updateCache);
@@ -42,14 +42,14 @@ public final class WaxOverlayRenderer {
         cachedRed = overlayColor.getRed() / 255.0F;
         cachedGreen = overlayColor.getGreen() / 255.0F;
         cachedBlue = overlayColor.getBlue() / 255.0F;
-        cachedEdgeWidth = WaxEverythingConfig.CONFIG.edgeWidth;
+//        cachedEdgeWidth = WaxEverythingConfig.CONFIG.edgeWidth;
     }
 
     public static void render(PoseStack poseStack, SubmitNodeCollector collector) {
         var box = new AABB(0, 0, 0, 1, 1, 1).inflate(0.005);
 
-        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) ->
-                drawWireframeBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 1.0F));
+//        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) ->
+//                drawWireframeBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 1.0F));
 
         collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) ->
                 drawFilledBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 0.8F));
@@ -150,6 +150,6 @@ public final class WaxOverlayRenderer {
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightCoordsUtil.FULL_BRIGHT)
                 .setNormal(pose, nx, ny, nz)
-                .setLineWidth(cachedEdgeWidth);
+                .setLineWidth(2.0F);
     }
 }

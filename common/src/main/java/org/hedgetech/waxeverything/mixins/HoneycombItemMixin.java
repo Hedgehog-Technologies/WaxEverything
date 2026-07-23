@@ -6,12 +6,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
-import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.mixins.invokers.ShelfBlockInvoker;
 import org.hedgetech.waxeverything.saveddata.WaxManager;
@@ -44,10 +42,22 @@ public class HoneycombItemMixin {
             serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, pos, 0);
 
             var block = state.getBlock();
-            if (block instanceof ShelfBlock sb) {
-                ((ShelfBlockInvoker) sb).waxeverything$invokeNeighborChanged(state, level, pos, sb, null, false);
-            } else if (block instanceof RedstoneTorchBlock) {
-                level.setBlock(pos, state.setValue(BlockStateProperties.LIT, false), 3);
+            switch (block) {
+                case ShelfBlock sb ->
+                        ((ShelfBlockInvoker) sb).waxeverything$invokeNeighborChanged(state, level, pos, sb, null, false);
+                case RedstoneTorchBlock _ ->
+                        level.setBlock(pos, state.setValue(BlockStateProperties.LIT, false), 3);
+                case ChestBlock _ -> {
+                    if (state.hasProperty(ChestBlock.TYPE) && state.getValue(ChestBlock.TYPE) != ChestType.SINGLE) {
+                        var neighborPos = state.getValue(ChestBlock.TYPE) == ChestType.LEFT
+                                ? pos.relative(state.getValue(ChestBlock.FACING).getClockWise())
+                                : pos.relative(state.getValue(ChestBlock.FACING).getCounterClockWise());
+                        WaxManager.wax(serverLevel, neighborPos);
+                        serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, neighborPos, 0);
+                    }
+                }
+                default -> {
+                }
             }
 
             if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
