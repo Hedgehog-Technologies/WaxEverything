@@ -1,4 +1,4 @@
-package org.hedgetech.waxeverything.mixins.storageblocks;
+package org.hedgetech.waxeverything.mixins.storageblockmixins;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

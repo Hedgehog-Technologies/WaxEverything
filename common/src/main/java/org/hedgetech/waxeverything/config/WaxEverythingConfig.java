@@ -26,6 +26,7 @@ public class WaxEverythingConfig {
     public static final boolean DEFAULT_SHULKER_BOX_LOCKED_WHEN_WAXED = false;
     public static final boolean DEFAULT_WAX_PREVENTS_CHEST_COMBINE = true;
     public static final boolean DEFAULT_WAX_PREVENTS_COPPER_CHEST_COMBINE = false;
+    public static final boolean DEFAULT_CLICK_THROUGH_WAXED_FRAMES = true;
 
     public int overlayColorInt = DEFAULT_OVERLAY_COLOR.getRGB();
 //    public float edgeWidth = 2.0F;
@@ -37,6 +38,7 @@ public class WaxEverythingConfig {
     public boolean shulkerBoxLockedWhenWaxed = DEFAULT_SHULKER_BOX_LOCKED_WHEN_WAXED;
     public boolean waxPreventsChestCombine = DEFAULT_WAX_PREVENTS_CHEST_COMBINE;
     public boolean waxPreventsCopperChestCombine = DEFAULT_WAX_PREVENTS_COPPER_CHEST_COMBINE;
+    public boolean clickThroughWaxedFrames = DEFAULT_CLICK_THROUGH_WAXED_FRAMES;
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
     private static final List<Runnable> RELOAD_LISTENERS = new ArrayList<>();

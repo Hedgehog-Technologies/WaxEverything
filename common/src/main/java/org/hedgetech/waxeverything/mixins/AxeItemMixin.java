@@ -6,11 +6,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.AxeItem;
+import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.ChestBlock;
-import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.RedstoneTorchBlock;
-import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.piston.PistonHeadBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -19,6 +17,7 @@ import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.mixins.invokers.ShelfBlockInvoker;
 import org.hedgetech.waxeverything.saveddata.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -28,8 +27,6 @@ public class AxeItemMixin {
 
     @Inject(method = "useOn", at = @At("RETURN"), cancellable = true)
     private void waxeverything$useOn(UseOnContext context, CallbackInfoReturnable<InteractionResult> cir) {
-        if (cir.getReturnValue() != InteractionResult.PASS) return;
-
         var level = context.getLevel();
         var pos = context.getClickedPos();
         var state = level.getBlockState(pos);
@@ -40,10 +37,7 @@ public class AxeItemMixin {
         if (!level.isClientSide()) {
             ServerLevel serverLevel = (ServerLevel) level;
 
-            WaxManager.unwax(serverLevel, pos);
-
-            serverLevel.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
-            serverLevel.levelEvent(LevelEvent.PARTICLES_WAX_OFF, pos, 0);
+            waxeverything$removeWax(serverLevel, pos);
 
             var block = state.getBlock();
             switch (block) {
@@ -57,9 +51,7 @@ public class AxeItemMixin {
                                 ? pos.relative(state.getValue(ChestBlock.FACING).getClockWise())
                                 : pos.relative(state.getValue(ChestBlock.FACING).getCounterClockWise());
 
-                        WaxManager.unwax(serverLevel, neighborPos);
-                        serverLevel.playSound(null, neighborPos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
-                        serverLevel.levelEvent(LevelEvent.PARTICLES_WAX_OFF, neighborPos, 0);
+                        waxeverything$removeWax(serverLevel, neighborPos);
                     }
                 }
                 case PistonBaseBlock _, PistonHeadBlock _ -> {
@@ -70,20 +62,35 @@ public class AxeItemMixin {
                         neighborPos = pos.relative(state.getValue(PistonHeadBlock.FACING).getOpposite());
                     }
 
-                    WaxManager.unwax(serverLevel, neighborPos);
-                    serverLevel.playSound(null, neighborPos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    serverLevel.levelEvent(LevelEvent.PARTICLES_WAX_OFF, neighborPos, 0);
+                    waxeverything$removeWax(serverLevel, neighborPos);
                 }
-                default -> {
-                }
+                default -> { }
             }
 
-            if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild) {
+            if (context.getPlayer() != null && !context.getPlayer().getAbilities().instabuild
+                    && waxeverything$isNotVanillaWaxable(state.getBlock())
+            ) {
                 context.getItemInHand().hurtAndBreak(1, context.getPlayer(), context.getHand());
             }
         }
 
         InteractionResult result = level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
         cir.setReturnValue(result);
+    }
+
+    @Unique
+    private void waxeverything$removeWax(ServerLevel level, BlockPos pos) {
+        WaxManager.unwax(level, pos);
+
+        if (waxeverything$isNotVanillaWaxable(level.getBlockState(pos).getBlock())) {
+            level.playSound(null, pos, SoundEvents.AXE_WAX_OFF, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.levelEvent(LevelEvent.PARTICLES_WAX_OFF, pos, 0);
+        }
+    }
+
+    @Unique
+    private boolean waxeverything$isNotVanillaWaxable(Block block) {
+        return !HoneycombItem.WAXABLES.get().containsKey(block)
+                && !HoneycombItem.WAXABLES.get().containsValue(block);
     }
 }

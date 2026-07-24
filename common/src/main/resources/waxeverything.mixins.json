@@ -13,15 +13,16 @@
     "BlockStateBaseMixin",
     "FallingBlockEntityMixin",
     "HoneycombItemMixin",
+    "ItemFrameMixin",
     "LevelMixin",
     "PistonBaseBlockMixin",
     "RedstoneTorchBlockMixin",
     "ShelfBlockMixin",
     "invokers.ShelfBlockInvoker",
-    "storageblocks.BarrelBlockMixin",
-    "storageblocks.ChestBlockMixin",
-    "storageblocks.EnderChestBlockMixin",
-    "storageblocks.ShulkerBoxBlockMixin"
+    "storageblockmixins.BarrelBlockMixin",
+    "storageblockmixins.ChestBlockMixin",
+    "storageblockmixins.EnderChestBlockMixin",
+    "storageblockmixins.ShulkerBoxBlockMixin"
   ],
   "server": [],
   "injectors": {
