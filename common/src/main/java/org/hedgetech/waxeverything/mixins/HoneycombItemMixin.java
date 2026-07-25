@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.mixins.invokers.ShelfBlockInvoker;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +31,7 @@ public class HoneycombItemMixin {
         BlockState state = level.getBlockState(pos);
 
         if (state.is(Blocks.MOVING_PISTON)) return;
-        if (WaxEverything.isWaxed(level, pos)) return;
+        if (WaxManager.isWaxed(level, pos)) return;
 
         if (!level.isClientSide()) {
             ServerLevel serverLevel = (ServerLevel) level;

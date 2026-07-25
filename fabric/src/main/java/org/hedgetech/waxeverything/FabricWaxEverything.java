@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.hedgetech.waxeverything.network.SyncWaxStatePacket;
 import org.hedgetech.waxeverything.network.SyncWaxedChunkPacket;
 import org.hedgetech.waxeverything.network.WaxNetworkHelper;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 
 /**
  * Fabric Server Entry Point

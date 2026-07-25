@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.world.level.block.state.BlockState;
 import org.hedgetech.waxeverything.Constants;
-import org.hedgetech.waxeverything.saveddata.ClientWaxRegistry;
+import org.hedgetech.waxeverything.waxtracking.ClientWaxRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

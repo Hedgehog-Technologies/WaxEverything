@@ -11,6 +11,7 @@
     "AxeItemMixin",
     "BeaconBlockMixin",
     "BlockStateBaseMixin",
+    "EntityMixin",
     "FallingBlockEntityMixin",
     "HoneycombItemMixin",
     "ItemFrameMixin",

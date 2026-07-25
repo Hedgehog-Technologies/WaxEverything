@@ -17,7 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.config.WaxEverythingConfig;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -35,7 +35,7 @@ public abstract class ChestBlockMixin {
 
     @Inject(method = "useWithoutItem", at = @At("HEAD"), cancellable = true)
     private void waxeverything$useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
-        if (this.waxeverything$waxActsAsLock() && WaxEverything.isWaxed(level, pos)) {
+        if (this.waxeverything$waxActsAsLock() && WaxManager.isWaxed(level, pos)) {
             Constants.LOG.debug("Chest is waxed and locked, preventing interaction.");
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
@@ -53,9 +53,9 @@ public abstract class ChestBlockMixin {
                     ? pos.relative(facingDirection.getClockWise())
                     : pos.relative(facingDirection.getCounterClockWise());
 
-            if (this.waxeverything$waxPreventsCombine() && WaxEverything.isWaxed(level, neighborPos)) {
+            if (this.waxeverything$waxPreventsCombine() && WaxManager.isWaxed(level, neighborPos)) {
                 cir.setReturnValue(returnState.setValue(ChestBlock.TYPE, ChestType.SINGLE));
-            } else if (level instanceof ServerLevel serverLevel && WaxEverything.isWaxed(level, neighborPos)) {
+            } else if (level instanceof ServerLevel serverLevel && WaxManager.isWaxed(level, neighborPos)) {
                 WaxManager.wax(serverLevel, pos);
                 serverLevel.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, pos, 0);
             }
@@ -67,7 +67,7 @@ public abstract class ChestBlockMixin {
         var returnState = cir.getReturnValue();
 
         if (returnState.getValue(ChestBlock.TYPE) != ChestType.SINGLE && getConnectedDirection(returnState) == directionToNeighbour) {
-            if (this.waxeverything$waxPreventsCombine() && WaxEverything.isWaxed((Level) level, pos)) {
+            if (this.waxeverything$waxPreventsCombine() && WaxManager.isWaxed((Level) level, pos)) {
                 Constants.LOG.debug("Chest is waxed and cannot combine with neighbors, preventing combination.");
                 cir.setReturnValue(returnState.setValue(ChestBlock.TYPE, ChestType.SINGLE));
             }

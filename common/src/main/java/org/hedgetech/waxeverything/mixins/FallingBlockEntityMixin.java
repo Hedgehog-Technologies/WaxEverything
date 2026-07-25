@@ -8,7 +8,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +24,7 @@ public class FallingBlockEntityMixin {
 
         var entity = cir.getReturnValue();
         if (entity != null) {
-            if (WaxEverything.isWaxed(level, pos)) {
+            if (WaxManager.isWaxed(level, pos)) {
                 WaxManager.unwax((ServerLevel) level, pos);
                 if (entity.blockData == null) {
                     entity.blockData = new CompoundTag();

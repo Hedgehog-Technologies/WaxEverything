@@ -18,15 +18,13 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.io.IOException;
 
 @Mixin(ItemFrame.class)
 public class ItemFrameMixin {
@@ -50,11 +48,11 @@ public class ItemFrameMixin {
         if (isEmpty) return;
 
         Constants.LOG.info("Interacting with item frame at {}, fixed state: {}, held item: {}", framePos, this.fixed, heldItem);
-        if (this.fixed && WaxEverything.isWaxed(level, framePos)) {
+        if (this.fixed && WaxManager.isWaxed(level, frame)) {
             if (player.isCrouching()) return;
 
             if (heldItem.getItem() instanceof AxeItem) {
-                WaxManager.unwax((ServerLevel) level, framePos);
+                WaxManager.unwax(level, frame);
                 frame.playSound(SoundEvents.AXE_WAX_OFF, 1.0F, 1.0F);
                 level.levelEvent(LevelEvent.PARTICLES_WAX_OFF, framePos, 0);
 
@@ -74,8 +72,8 @@ public class ItemFrameMixin {
         }
 
         Constants.LOG.info("Interacting with item frame at {}, fixed state: {}, held item: {}", framePos, this.fixed, heldItem);
-        if (!this.fixed && !WaxEverything.isWaxed(level, framePos) && heldItem.is(Items.HONEYCOMB)) {
-            WaxManager.wax((ServerLevel) level, framePos);
+        if (!this.fixed && !WaxManager.isWaxed(level, frame) && heldItem.is(Items.HONEYCOMB)) {
+            WaxManager.wax(level, frame);
             level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_WAX_ON, framePos, 0);
 
             if (!player.getAbilities().instabuild) {

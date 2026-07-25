@@ -13,6 +13,7 @@ import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,7 +34,7 @@ public class ShelfBlockMixin {
             BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult,
             CallbackInfoReturnable<InteractionResult> cir
     ) {
-        if (WaxEverything.isWaxed(level, pos)) {
+        if (WaxManager.isWaxed(level, pos)) {
             Constants.LOG.debug("Shelf at {} is waxed, preventing interaction.", pos);
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
@@ -41,7 +42,7 @@ public class ShelfBlockMixin {
 
     @Inject(method = "neighborChanged", at = @At("HEAD"))
     private void waxeverything$hasNeighborSignal(BlockState state, Level level, BlockPos pos, Block block, Orientation orientation, boolean movedByPiston, CallbackInfo ci) {
-        waxeverything$isWaxed = WaxEverything.isWaxed(level, pos);
+        waxeverything$isWaxed = WaxManager.isWaxed(level, pos);
     }
 
     @ModifyVariable(

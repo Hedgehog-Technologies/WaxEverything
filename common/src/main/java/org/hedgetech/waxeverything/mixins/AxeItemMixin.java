@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.mixins.invokers.ShelfBlockInvoker;
-import org.hedgetech.waxeverything.saveddata.WaxManager;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,7 +31,7 @@ public class AxeItemMixin {
         var pos = context.getClickedPos();
         var state = level.getBlockState(pos);
 
-        var isWaxed = WaxEverything.isWaxed(level, pos);
+        var isWaxed = WaxManager.isWaxed(level, pos);
         if (!isWaxed) return;
 
         if (!level.isClientSide()) {

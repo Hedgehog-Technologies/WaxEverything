@@ -10,7 +10,9 @@ import net.minecraft.core.BlockPos;
 import org.hedgetech.waxeverything.client.WaxOverlayRenderer;
 import org.hedgetech.waxeverything.network.SyncWaxStatePacket;
 import org.hedgetech.waxeverything.network.SyncWaxedChunkPacket;
-import org.hedgetech.waxeverything.saveddata.ClientWaxRegistry;
+import org.hedgetech.waxeverything.waxtracking.ClientWaxRegistry;
+
+import java.util.List;
 
 public class FabricClientWaxEverything implements ClientModInitializer {
 
@@ -25,11 +27,11 @@ public class FabricClientWaxEverything implements ClientModInitializer {
     private static void registerClientPacketHandlers() {
         ClientPlayNetworking.registerGlobalReceiver(SyncWaxedChunkPacket.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        ClientWaxRegistry.onChunkSync(payload.chunkPos(), payload.blockPositions())));
+                        ClientWaxRegistry.onChunkSync(payload.chunkPos(), payload.targets())));
 
         ClientPlayNetworking.registerGlobalReceiver(SyncWaxStatePacket.TYPE,
                 (payload, context) -> context.client().execute(() ->
-                        ClientWaxRegistry.onWaxStateUpdate(payload.blockPos(), payload.waxed())));
+                        ClientWaxRegistry.onWaxStateUpdate(payload.target(), payload.waxed())));
     }
 
     private static void registerClientEvents() {
@@ -47,19 +49,7 @@ public class FabricClientWaxEverything implements ClientModInitializer {
             var poseStack = context.poseStack();
             var collector = context.submitNodeCollector();
 
-            ClientWaxRegistry.forEachWaxedBlock(packedPos -> {
-                var pos = BlockPos.of(packedPos);
-                var x = pos.getX() - cameraPos.x;
-                var y = pos.getY() - cameraPos.y;
-                var z = pos.getZ() - cameraPos.z;
-
-                poseStack.pushPose();
-                poseStack.translate(x, y, z);
-
-                WaxOverlayRenderer.render(poseStack, collector);
-
-                poseStack.popPose();
-            });
+            WaxOverlayRenderer.renderAll(poseStack, collector, cameraPos);
         });
     }
 

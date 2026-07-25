@@ -10,6 +10,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.WaxEverything;
 import org.hedgetech.waxeverything.config.WaxEverythingConfig;
+import org.hedgetech.waxeverything.waxtracking.WaxManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +21,7 @@ public class BarrelBlockMixin {
 
     @Inject(method = "useWithoutItem", at = @At("HEAD"), cancellable = true)
     private void waxeverything$useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult, CallbackInfoReturnable<InteractionResult> cir) {
-        if (WaxEverythingConfig.CONFIG.barrelLockedWhenWaxed && WaxEverything.isWaxed(level, pos)) {
+        if (WaxEverythingConfig.CONFIG.barrelLockedWhenWaxed && WaxManager.isWaxed(level, pos)) {
             Constants.LOG.debug("Barrel is waxed and locked, preventing interaction.");
             cir.setReturnValue(InteractionResult.SUCCESS);
         }

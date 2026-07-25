@@ -4,14 +4,21 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.hedgetech.waxeverything.Constants;
 import org.hedgetech.waxeverything.config.WaxEverythingConfig;
+import org.hedgetech.waxeverything.waxtracking.ClientWaxRegistry;
+import org.hedgetech.waxeverything.waxtracking.WaxTarget;
 
 import java.awt.*;
 
@@ -45,15 +52,73 @@ public final class WaxOverlayRenderer {
 //        cachedEdgeWidth = WaxEverythingConfig.CONFIG.edgeWidth;
     }
 
-    public static void render(PoseStack poseStack, SubmitNodeCollector collector) {
-        var box = new AABB(0, 0, 0, 1, 1, 1).inflate(0.005);
+    public static void renderAll(PoseStack poseStack, SubmitNodeCollector collector, Vec3 cameraPos) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level == null) return;
 
-//        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) ->
-//                drawWireframeBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 1.0F));
+        for (WaxTarget target : ClientWaxRegistry.getAllWaxedTargets()) {
+            if (target instanceof WaxTarget.BlockTarget(BlockPos pos)) {
+                renderBlockOverlay(poseStack, collector, cameraPos, pos);
+            } else if (target instanceof WaxTarget.EntityTarget entityTarget) {
+                renderEntityOverlay(poseStack, collector, cameraPos, level, entityTarget);
+            }
+        }
+    }
+
+    private static void renderBlockOverlay(PoseStack poseStack, SubmitNodeCollector collector, Vec3 cameraPos, BlockPos pos) {
+        poseStack.pushPose();
+
+        double x = pos.getX() - cameraPos.x;
+        double y = pos.getY() - cameraPos.y;
+        double z = pos.getZ() - cameraPos.z;
+        poseStack.translate(x, y, z);
 
         collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) ->
-                drawFilledBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 0.8F));
+                drawFilledBox(
+                        pose,
+                        buffer,
+                        new AABB(0, 0, 0, 1, 1, 1).inflate(0.005),
+                        cachedRed,
+                        cachedGreen,
+                        cachedBlue,
+                        0.8F
+                )
+        );
+
+        poseStack.popPose();
     }
+
+    private static void renderEntityOverlay(PoseStack poseStack, SubmitNodeCollector collector, Vec3 cameraPos, ClientLevel level, WaxTarget.EntityTarget target) {
+        Entity entity = null;
+
+        for (Entity loaded : level.entitiesForRendering()) {
+            if (loaded.getUUID().equals(target.entityUuid())) {
+                entity = loaded;
+                break;
+            }
+        }
+
+        if (entity == null) return;
+
+        var box = entity.getBoundingBox();
+
+        poseStack.pushPose();
+        poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+
+        collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) ->
+                drawFilledBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 0.8F)
+        );
+    }
+
+//    public static void render(PoseStack poseStack, SubmitNodeCollector collector) {
+//        var box = new AABB(0, 0, 0, 1, 1, 1).inflate(0.005);
+//
+////        collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) ->
+////                drawWireframeBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 1.0F));
+//
+//        collector.submitCustomGeometry(poseStack, RenderTypes.debugFilledBox(), (pose, buffer) ->
+//                drawFilledBox(pose, buffer, box, cachedRed, cachedGreen, cachedBlue, 0.8F));
+//    }
 
     private static void drawWireframeBox(PoseStack.Pose pose, VertexConsumer buffer, AABB box, float r, float g, float b, float a) {
         float minX = (float) box.minX;
@@ -152,4 +217,6 @@ public final class WaxOverlayRenderer {
                 .setNormal(pose, nx, ny, nz)
                 .setLineWidth(2.0F);
     }
+
+    private WaxOverlayRenderer() { }
 }
