@@ -22,7 +22,7 @@ public final class ClientWaxRegistry {
     }
 
     public static void onWaxStateUpdate(WaxTarget target, boolean waxed) {
-        var chunkKey = WaxedSavedData.getChunkKeyForTarget(target);
+        var chunkKey = target.getChunkPos().pack();
 
         if (waxed) {
             waxedTargets.computeIfAbsent(chunkKey, k -> new HashSet<>()).add(target);
@@ -40,7 +40,7 @@ public final class ClientWaxRegistry {
     }
 
     public static boolean isWaxed(WaxTarget target) {
-        var chunkKey = WaxedSavedData.getChunkKeyForTarget(target);
+        var chunkKey = target.getChunkPos().pack();
         var set = waxedTargets.get(chunkKey);
         return set != null && set.contains(target);
     }

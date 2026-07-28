@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.ChunkPos;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
@@ -15,6 +16,17 @@ import java.util.UUID;
 public sealed interface WaxTarget {
 
     TargetType getType();
+
+    default ChunkPos getChunkPos() {
+        if (this instanceof WaxTarget.BlockTarget(BlockPos pos)) {
+            return ChunkPos.containing(pos);
+        } else if (this instanceof WaxTarget.EntityTarget entityTarget) {
+            if (entityTarget.lastKnownPos().isPresent()) {
+                return ChunkPos.containing(entityTarget.lastKnownPos().get());
+            }
+        }
+        return new ChunkPos(0, 0);
+    }
 
     record BlockTarget(BlockPos pos) implements WaxTarget {
         public static final MapCodec<BlockTarget> CODEC = RecordCodecBuilder.mapCodec(instance ->

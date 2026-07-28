@@ -1,12 +1,10 @@
 package org.hedgetech.waxeverything.waxtracking;
 
-import net.minecraft.Optionull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.hedgetech.waxeverything.network.WaxNetworkHelper;
 
 import java.util.Optional;
@@ -14,11 +12,11 @@ import java.util.Optional;
 public final class WaxManager {
 
     public static void onChunkLoad(ServerLevel level, ChunkPos pos) {
-        WaxedSavedData.get(level).onChunkLoad(pos);
+        WaxChunkStorage.get(level).loadChunkData(pos);
     }
 
     public static void onChunkUnload(ServerLevel level, ChunkPos pos) {
-        WaxedSavedData.get(level).onChunkUnload(pos);
+        WaxChunkStorage.get(level).saveAndUnloadChunkData(pos);
     }
 
     // --- Block Conveniences ---
@@ -54,7 +52,8 @@ public final class WaxManager {
         }
 
         if (level instanceof ServerLevel serverLevel) {
-            return WaxedSavedData.get(serverLevel).isWaxed(target);
+            var chunkPos = target.getChunkPos();
+            return WaxChunkStorage.get(serverLevel).getTargets(chunkPos).contains(target);
         }
 
         return false;
@@ -62,7 +61,8 @@ public final class WaxManager {
 
     public static boolean wax(Level level, WaxTarget target) {
         if (level instanceof ServerLevel serverLevel) {
-            var success = WaxedSavedData.get(serverLevel).wax(target);
+            var chunkPos = target.getChunkPos();
+            var success = WaxChunkStorage.get(serverLevel).wax(chunkPos, target);
 
             if (success) {
                 WaxNetworkHelper.sendWaxUpdate(serverLevel, target, true);
@@ -76,7 +76,8 @@ public final class WaxManager {
 
     public static boolean unwax(Level level, WaxTarget target) {
         if (level instanceof ServerLevel serverLevel) {
-            var success = WaxedSavedData.get(serverLevel).unwax(target);
+            var chunkPos = target.getChunkPos();
+            var success = WaxChunkStorage.get(serverLevel).unwax(chunkPos, target);
 
             if (success) {
                 WaxNetworkHelper.sendWaxUpdate(serverLevel, target, false);
@@ -88,27 +89,5 @@ public final class WaxManager {
         return false;
     }
 
-//    public static void onChunkLoad(ServerLevel level, ChunkPos pos) {
-//        WaxedSavedData.get(level).onChunkLoad(pos);
-//    }
-//
-//    public static void onChunkUnload(ServerLevel level, ChunkPos pos) {
-//        WaxedSavedData.get(level).onChunkUnload(pos);
-//    }
-//
-//    public static void wax(ServerLevel level, BlockPos pos) {
-//        WaxedSavedData.get(level).wax(pos);
-//        WaxNetworkHelper.sendWaxUpdate(level, pos, true);
-//    }
-//
-//    public static void unwax(ServerLevel level, BlockPos pos) {
-//        WaxedSavedData.get(level).unwax(pos);
-//        WaxNetworkHelper.sendWaxUpdate(level, pos, false);
-//    }
-//
-//    public static boolean isWaxed(ServerLevel level, BlockPos pos) {
-//        return WaxedSavedData.get(level).isWaxed(pos);
-//    }
-//
-//    private WaxManager() {}
+    private WaxManager() { }
 }

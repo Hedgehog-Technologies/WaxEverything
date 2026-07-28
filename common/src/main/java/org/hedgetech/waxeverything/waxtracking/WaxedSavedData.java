@@ -13,6 +13,7 @@ import org.hedgetech.waxeverything.Constants;
 
 import java.util.*;
 
+@Deprecated(forRemoval = true)
 public class WaxedSavedData extends SavedData {
 
     private static final String DATA_NAME = "waxed_targets_data";

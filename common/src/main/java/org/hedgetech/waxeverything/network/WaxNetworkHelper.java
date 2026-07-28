@@ -6,9 +6,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Block;
+import org.hedgetech.waxeverything.waxtracking.WaxChunkStorage;
 import org.hedgetech.waxeverything.waxtracking.WaxTarget;
-import org.hedgetech.waxeverything.waxtracking.WaxedSavedData;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -37,7 +36,7 @@ public final class WaxNetworkHelper {
     }
 
     public static void sendChunkSync(ServerLevel level, ChunkPos chunkPos, ServerPlayer player) {
-        var targets = WaxedSavedData.get(level).getTargetsForChunk(chunkPos.pack());
+        var targets = WaxChunkStorage.get(level).getTargets(chunkPos);
         if (!targets.isEmpty()) {
             player.connection.send(new ClientboundCustomPayloadPacket(
                     new SyncWaxedChunkPacket(chunkPos.pack(), new ArrayList<>(targets))
@@ -46,9 +45,9 @@ public final class WaxNetworkHelper {
     }
 
     public static void sendAllLoadedChunksToPlayer(ServerLevel level, ServerPlayer player) {
-        var savedData = WaxedSavedData.get(level);
+        var storage = WaxChunkStorage.get(level);
         player.getChunkTrackingView().forEach(chunkPos -> {
-            var targets = savedData.getTargetsForChunk(chunkPos.pack());
+            var targets = storage.getTargets(chunkPos);
             if (!targets.isEmpty()) {
                 player.connection.send(new ClientboundCustomPayloadPacket(
                         new SyncWaxedChunkPacket(chunkPos.pack(), new ArrayList<>(targets))
