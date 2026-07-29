@@ -36,10 +36,12 @@ public class FabricClientWaxEverything implements ClientModInitializer {
 
     private static void registerClientEvents() {
         ClientChunkEvents.CHUNK_UNLOAD.register((world, chunk) ->
-                ClientWaxRegistry.onChunkUnload(chunk.getPos()));
+                ClientWaxRegistry.onChunkUnload(chunk.getPos())
+        );
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) ->
-                ClientWaxRegistry.clear());
+                ClientWaxRegistry.clear()
+        );
 
         LevelRenderEvents.AFTER_TRANSLUCENT_TERRAIN.register(context -> {
             if (!WaxOverlayRenderer.KEY_SHOW_WAXED.isDown()) return;

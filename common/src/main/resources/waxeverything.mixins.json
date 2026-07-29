@@ -17,6 +17,7 @@
     "ItemFrameMixin",
     "LevelMixin",
     "PistonBaseBlockMixin",
+    "PlayerChunkSenderMixin",
     "RedstoneTorchBlockMixin",
     "ShelfBlockMixin",
     "invokers.ShelfBlockInvoker",

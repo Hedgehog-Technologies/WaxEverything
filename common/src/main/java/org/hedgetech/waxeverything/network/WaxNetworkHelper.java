@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import org.hedgetech.waxeverything.waxtracking.WaxChunkStorage;
@@ -36,9 +37,13 @@ public final class WaxNetworkHelper {
     }
 
     public static void sendChunkSync(ServerLevel level, ChunkPos chunkPos, ServerPlayer player) {
+        sendChunkSync(level, chunkPos, player.connection);
+    }
+
+    public static void sendChunkSync(ServerLevel level, ChunkPos chunkPos, ServerGamePacketListenerImpl connection) {
         var targets = WaxChunkStorage.get(level).getTargets(chunkPos);
         if (!targets.isEmpty()) {
-            player.connection.send(new ClientboundCustomPayloadPacket(
+            connection.send(new ClientboundCustomPayloadPacket(
                     new SyncWaxedChunkPacket(chunkPos.pack(), new ArrayList<>(targets))
             ));
         }

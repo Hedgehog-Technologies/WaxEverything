@@ -56,6 +56,8 @@ public final class WaxOverlayRenderer {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) return;
 
+        Constants.LOG.trace("Rendering wax overlays for {} targets", ClientWaxRegistry.getAllWaxedTargets().size());
+
         for (WaxTarget target : ClientWaxRegistry.getAllWaxedTargets()) {
             if (target instanceof WaxTarget.BlockTarget(BlockPos pos)) {
                 renderBlockOverlay(poseStack, collector, cameraPos, pos);

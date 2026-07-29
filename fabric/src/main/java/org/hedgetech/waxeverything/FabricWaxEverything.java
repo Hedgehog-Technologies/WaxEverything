@@ -39,12 +39,6 @@ public class FabricWaxEverything implements ModInitializer {
         ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> {
             WaxManager.onChunkUnload(level, chunk.getPos());
         });
-
-        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            ServerPlayer player = handler.getPlayer();
-            ServerLevel serverLevel = player.level();
-            WaxNetworkHelper.sendAllLoadedChunksToPlayer(serverLevel, player);
-        });
     }
 
     /**
